@@ -1,5 +1,11 @@
 import json, os, psutil, random
 from datetime import datetime
+from multiprocessing import Process
+from functools import wraps
+from threading import Timer
+
+# Change wallpaper every 15 sec
+DELAY = 15
 
 class App(object):
     def __init__ (self):
@@ -54,7 +60,7 @@ class App(object):
         return wallpapers
 
     def change_wallpaper(self):
-   
+        self.process_list = self.create_process_list()
         [self.kill_process(process) for process in self.process_list]
         
         self.config[list(self.config.keys())[2]]['general']['wallpaperconfig']['selectedwallpapers'][list(self.config[list(self.config.keys())[2]]['general']['wallpaperconfig']['selectedwallpapers'].keys())[0]]['file'] = random.choice(self.users_wallpapers)
@@ -63,9 +69,24 @@ class App(object):
 
         os.startfile(f"{self.wallpaper_directory}/wallpaper32.exe")
         
-        
+def periodic(delay):
+        def decorator(f):
+            @wraps(f)
+            def wrapper(*args, **kwargs):
+                f(*args, **kwargs)
+                Timer(delay, wrapper, args=args, kwargs=kwargs).start()
+            return wrapper
+        return decorator
+
+class Worker(object):
+    @periodic(DELAY)
+    def work(self, callback):
+        callback()
+        print('run callback')
+
+
 
 app = App()
-app.change_wallpaper()
+worker = Worker()
+worker.work(callback=app.change_wallpaper)
 
-# print(app.get_list_of_wallpapers())
