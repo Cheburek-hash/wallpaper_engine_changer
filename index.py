@@ -46,12 +46,8 @@ class App(object):
             return json.load(f)
 
     def get_list_of_wallpapers(self):
-        # wallpaperconfigrecent = self.config[list(self.config.keys())[2]]['general']['wallpaperconfigrecent']
         wallpapers = []
-        # for wallpaper in wallpaperconfigrecent:
-        #     files.append(wallpaper['config']['selectedwallpapers'][list(wallpaper['config']['selectedwallpapers'].keys())[0]])
-        
-        
+    
         for root, dirs, files in os.walk(self.steam_workshop_dir):
             for file in files:
                 if file.endswith(".mp4") or file.endswith(".pkg"):
