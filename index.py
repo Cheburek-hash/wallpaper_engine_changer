@@ -1,19 +1,18 @@
 import json, os, psutil, random
 from datetime import datetime
-from multiprocessing import Process
 from functools import wraps
 from threading import Timer
 
-# Change wallpaper every 15 sec
-DELAY = 15
+# Change wallpaper every 6000 sec
+DELAY = 6000
 
 class App(object):
     def __init__ (self):
-        self.PROCESS_LIST = [
+        self.WALLPAPER_PROCESS_LIST = [
             'wallpaper32.exe',
             'wallpaper64.exe'
         ]
-        self.time = datetime.now()
+        # self.time = datetime.now()
         self.process_list = self.create_process_list()
         self.wallpaper_directory = self.process_list[0].cwd()
         self.config = self.load_config()
@@ -28,7 +27,7 @@ class App(object):
 
     def create_process_list(self):
         processes = []
-        for process_name in self.PROCESS_LIST:
+        for process_name in self.WALLPAPER_PROCESS_LIST:
             process = self.get_process(process_name)
             if not process == None:
                 processes.append(process)
@@ -47,12 +46,11 @@ class App(object):
 
     def get_list_of_wallpapers(self):
         wallpapers = []
-    
+
         for root, dirs, files in os.walk(self.steam_workshop_dir):
             for file in files:
                 if file.endswith(".mp4") or file.endswith(".pkg"):
                     wallpapers.append(os.path.join(root, file))
-                   
         return wallpapers
 
     def change_wallpaper(self):
